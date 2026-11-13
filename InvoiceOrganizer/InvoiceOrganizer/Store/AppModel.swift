@@ -188,7 +188,7 @@ final class AppModel {
             var newItems: [InvoiceItem] = []
             for file in files {
                 let name = file.lastPathComponent
-                if var old = oldByCurrent[name] {
+                if let old = oldByCurrent[name] {
                     newItems.append(old)
                     continue
                 }

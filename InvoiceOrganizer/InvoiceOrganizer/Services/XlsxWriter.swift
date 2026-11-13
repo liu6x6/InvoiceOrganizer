@@ -232,10 +232,15 @@ nonisolated enum ZipWriter {
 
     private static func dosTimestamp() -> (time: UInt16, date: UInt16) {
         let comps = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: Date())
-        let year = max(1980, comps.year ?? 1980)
-        let date = UInt16(((year - 1980) << 9) | ((comps.month ?? 1) << 5) | (comps.day ?? 1))
-        let time = UInt16(((comps.hour ?? 0) << 11) | ((comps.minute ?? 0) << 5) | ((comps.second ?? 0) / 2))
-        return (time, date)
+        let year: Int = max(1980, comps.year ?? 1980)
+        let month: Int = comps.month ?? 1
+        let day: Int = comps.day ?? 1
+        let hour: Int = comps.hour ?? 0
+        let minute: Int = comps.minute ?? 0
+        let second: Int = comps.second ?? 0
+        let dateValue: Int = ((year - 1980) << 9) | (month << 5) | day
+        let timeValue: Int = (hour << 11) | (minute << 5) | (second / 2)
+        return (time: UInt16(timeValue), date: UInt16(dateValue))
     }
 }
 
