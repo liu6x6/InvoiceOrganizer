@@ -215,13 +215,19 @@ nonisolated enum ZipWriter {
     }
 
     private static let crcTable: [UInt32] = {
-        (0..<256).map { i -> UInt32 in
+        var table = [UInt32](repeating: 0, count: 256)
+        for i in 0..<256 {
             var c = UInt32(i)
             for _ in 0..<8 {
-                c = (c & 1) != 0 ? (0xEDB8_8320 ^ (c >> 1)) : (c >> 1)
+                if c & 1 != 0 {
+                    c = 0xEDB8_8320 ^ (c >> 1)
+                } else {
+                    c = c >> 1
+                }
             }
-            return c
+            table[i] = c
         }
+        return table
     }()
 
     private static func dosTimestamp() -> (time: UInt16, date: UInt16) {
@@ -233,7 +239,7 @@ nonisolated enum ZipWriter {
     }
 }
 
-private extension Data {
+private nonisolated extension Data {
     mutating func appendLE<T: FixedWidthInteger>(_ value: T) {
         var v = value.littleEndian
         Swift.withUnsafeBytes(of: &v) { append(contentsOf: $0) }
